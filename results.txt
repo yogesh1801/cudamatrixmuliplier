@@ -1,0 +1,2 @@
+cublas running time - 0.003 seconds
+naive running time - 0.1 seconds
