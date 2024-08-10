@@ -69,11 +69,12 @@ main()
 
     clock_t start = clock();
     cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, d_a, n, d_b, n, &beta, d_c, n);
-    clock_t end = clock();
+    
 
     cudaMemcpy(h_a, d_a, bytes, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_b, d_b, bytes, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost);
+    clock_t end = clock();
 
     
     double cuda_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;

@@ -6,14 +6,19 @@
 #include <math.h>
 #include <assert.h>
 
-// naive code to do matrix multiplication 1024*1024
+// using global memory coalescing
+// concept of warp and warp scheduler
+// while loading from global memory, warp scheduler can load 4 consec memory locations in single transaction
+
+// we are trying to minimize the loads (instead of sepearte loads for every thread)
+// Now just take care what u access in the function
 
 __global__
 void
 sgemm_naive(int M, int N, int K, float alpha, const float *A, const float *B, float beta, float *C)
 {
-    const unsigned int x = blockIdx.x * blockDim.x + threadIdx.x;
-    const unsigned int y = blockIdx.y * blockDim.y + threadIdx.y;
+    const int x = blockIdx.x * 32 + (threadIdx.x / 32);
+    const int y = blockIdx.y * 32 + (threadIdx.x % 32);
 
     if(x < M && y < M) {
         float tmp = 0.0;
@@ -43,9 +48,8 @@ main()
     cudaMalloc(&d_c, bytes);
 
     curandGenerator_t prng;
-    curandCreateGenerator(&prng, CURAND_RNG_PSEUDO_DEFAULT); // default random number generator
+    curandCreateGenerator(&prng, CURAND_RNG_PSEUDO_DEFAULT); 
 
-    // generate seed
 
     curandSetPseudoRandomGeneratorSeed(prng, (unsigned long long)clock());
 
@@ -70,5 +74,5 @@ main()
     clock_t end = clock();
 
     double cuda_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("naive Execution time: %f seconds\n", cuda_time_used);
+    printf("GMEMcol Execution time: %f seconds\n", cuda_time_used);
 } 
