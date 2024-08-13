@@ -1,3 +1,4 @@
 cublas running time - 0.007 seconds
-GMEMcol running time - 0.011000 seconds
+GMEMcol running time - 0.031000 seconds
+SGEMEM running time - 0.01 seconds
 naive running time - 0.12 seconds

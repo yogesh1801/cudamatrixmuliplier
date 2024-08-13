@@ -69,6 +69,13 @@ main()
     cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost);
     clock_t end = clock();
 
+    free(h_a);
+    free(h_b);
+    free(h_c);
+    free(d_a);
+    free(d_b);
+    free(d_c);
+
     double cuda_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("naive Execution time: %f seconds\n", cuda_time_used);
 } 

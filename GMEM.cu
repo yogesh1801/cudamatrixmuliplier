@@ -15,7 +15,7 @@
 
 __global__
 void
-sgemm_naive(int M, int N, int K, float alpha, const float *A, const float *B, float beta, float *C)
+gmem(int M, int N, int K, float alpha, const float *A, const float *B, float beta, float *C)
 {
     const int x = blockIdx.x * 32 + (threadIdx.x / 32);
     const int y = blockIdx.y * 32 + (threadIdx.x % 32);
@@ -66,12 +66,19 @@ main()
     dim3 blockDim(32,32,1);
     
     clock_t start = clock();
-    sgemm_naive<<<gridDim,blockDim>>>(M,N,K,1.0f,d_a,d_b,0.0f,d_c);
+    gmem<<<gridDim,blockDim>>>(M,N,K,1.0f,d_a,d_b,0.0f,d_c);
     
     cudaMemcpy(h_a, d_a, bytes, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_b, d_b, bytes, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost);
     clock_t end = clock();
+
+    free(h_a);
+    free(h_b);
+    free(h_c);
+    free(d_a);
+    free(d_b);
+    free(d_c);
 
     double cuda_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("GMEMcol Execution time: %f seconds\n", cuda_time_used);
